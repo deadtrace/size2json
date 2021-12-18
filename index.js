@@ -35,6 +35,23 @@ app
         r.res.download("./img/output.png");
       });
   })
+  .get("/wordpress/", async (req, res, next) => {
+    const content = req.query.content;
+    const response = await axios.post(
+      "https://wordpress.kodaktor.ru/wp-json/jwt-auth/v1/token",
+      { username: "gossjsstudent2017", password: "|||123|||456" }
+    );
+    const token = response.data.token;
+    const WPresponse = await axios.post(
+      `https://wordpress.kodaktor.ru/wp-json/wp/v2/posts/`,
+
+      { content, title: "deadtrace", status: "publish" },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    res.send(WPresponse.data.id + "");
+  })
   .all("/log", (r) => {
     console.log(r.params.data);
     console.log(r.headers);
